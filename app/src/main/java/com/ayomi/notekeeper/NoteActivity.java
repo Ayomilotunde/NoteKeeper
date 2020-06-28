@@ -1,5 +1,6 @@
 package com.ayomi.notekeeper;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -13,11 +14,14 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import java.util.List;
 
 public class NoteActivity extends AppCompatActivity {
+    public static final String NOTE_INFO = "com.ayomi.notekeeper.NOTE_INFO";
+    private NoteInfo mNote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +45,21 @@ public class NoteActivity extends AppCompatActivity {
         ArrayAdapter<CourseInfo> adapterCourses = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, courses);
         adapterCourses.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinnerCourses.setAdapter(adapterCourses);
+        
+        readDisplayStateValues();
 
+        EditText textNoteTitle = findViewById(R.id.edt_note_title);
+        EditText textNoteText = findViewById(R.id.edt_note_text);
+        
+        displayNote(spinnerCourses,textNoteTitle, textNoteText);
+    }
 
+    private void displayNote(Spinner spinnerCourses, EditText textNoteTitle, EditText textNoteText) {
+    }
 
+    private void readDisplayStateValues() {
+        Intent intent = getIntent();
+        mNote = intent.getParcelableExtra(NOTE_INFO);
     }
 
     @Override
