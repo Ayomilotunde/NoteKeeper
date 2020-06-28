@@ -20,7 +20,7 @@ import android.widget.Spinner;
 import java.util.List;
 
 public class NoteActivity extends AppCompatActivity {
-    public static final String NOTE_INFO = "com.ayomi.notekeeper.NOTE_INFO";
+    public static final String NOTE_POSITION = "com.ayomi.notekeeper.NOTE_POSITION";
     private NoteInfo mNote;
     private boolean mIsNewNote;
 
@@ -52,7 +52,7 @@ public class NoteActivity extends AppCompatActivity {
         EditText textNoteTitle = findViewById(R.id.edt_note_title);
         EditText textNoteText = findViewById(R.id.edt_note_text);
 
-        if (!mIsNewNote) 
+        if (!mIsNewNote)
         displayNote(spinnerCourses,textNoteTitle, textNoteText);
     }
 
@@ -68,9 +68,15 @@ public class NoteActivity extends AppCompatActivity {
 
     private void readDisplayStateValues() {
         Intent intent = getIntent();
-        mNote = intent.getParcelableExtra(NOTE_INFO);
+        int position = intent.getIntExtra(NOTE_POSITION, getDefaultValue());
 
-        mIsNewNote = mNote == null;
+        mIsNewNote = position == getDefaultValue();
+        if (!mIsNewNote)
+            mNote = DataManager.getInstance().getNotes().get(position);
+    }
+
+    public static int getDefaultValue() {
+        return -1;
     }
 
     @Override
