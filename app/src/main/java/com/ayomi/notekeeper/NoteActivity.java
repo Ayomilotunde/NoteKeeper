@@ -22,6 +22,7 @@ import java.util.List;
 public class NoteActivity extends AppCompatActivity {
     public static final String NOTE_INFO = "com.ayomi.notekeeper.NOTE_INFO";
     private NoteInfo mNote;
+    private boolean mIsNewNote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,16 +51,26 @@ public class NoteActivity extends AppCompatActivity {
 
         EditText textNoteTitle = findViewById(R.id.edt_note_title);
         EditText textNoteText = findViewById(R.id.edt_note_text);
-        
+
+        if (!mIsNewNote) 
         displayNote(spinnerCourses,textNoteTitle, textNoteText);
     }
 
     private void displayNote(Spinner spinnerCourses, EditText textNoteTitle, EditText textNoteText) {
+        List<CourseInfo> courses = DataManager.getInstance().getCourses();
+        int courseIndex = courses.indexOf(mNote.getCourse());
+        spinnerCourses.setSelection(courseIndex);
+
+
+        textNoteTitle.setText(mNote.getTitle());
+        textNoteText.setText(mNote.getText());
     }
 
     private void readDisplayStateValues() {
         Intent intent = getIntent();
         mNote = intent.getParcelableExtra(NOTE_INFO);
+
+        mIsNewNote = mNote == null;
     }
 
     @Override
