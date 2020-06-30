@@ -8,6 +8,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.view.View;
 
@@ -28,9 +29,10 @@ public class NoteActivity extends AppCompatActivity {
     private EditText mTextNoteText;
     private int mNoteposition;
     private boolean mIsCancelling;
-    private String mOriginalNoteCourseId;
-    private String mOriginalNoteTitle;
-    private String mOriginalNoteText;
+    private  NoteActivityViewModel mViewModel;
+//    private String mOriginalNoteCourseId;
+//    private String mOriginalNoteTitle;
+//    private String mOriginalNoteText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,8 @@ public class NoteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_note);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+           //ViewModelProvider viewModelProvider = new ViewModelProvider(getViewModelStore()), ViewModelProvider.AndroidV
 
         /*FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
