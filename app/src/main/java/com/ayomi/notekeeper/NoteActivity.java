@@ -23,6 +23,10 @@ public class NoteActivity extends AppCompatActivity {
     public static final String NOTE_POSITION = "com.ayomi.notekeeper.NOTE_POSITION";
     private NoteInfo mNote;
     private boolean mIsNewNote;
+    private Spinner mSpinnerCourses;
+    private EditText mTextNoteTitle;
+    private EditText mTextNoteText;
+    private int mNoteposition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,20 +44,32 @@ public class NoteActivity extends AppCompatActivity {
             }
         });*/
 
-        Spinner spinnerCourses = findViewById(R.id.spinner_courses);
+        mSpinnerCourses = findViewById(R.id.spinner_courses);
 
         List<CourseInfo> courses = DataManager.getInstance().getCourses();
         ArrayAdapter<CourseInfo> adapterCourses = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, courses);
         adapterCourses.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        spinnerCourses.setAdapter(adapterCourses);
+        mSpinnerCourses.setAdapter(adapterCourses);
         
         readDisplayStateValues();
 
-        EditText textNoteTitle = findViewById(R.id.edt_note_title);
-        EditText textNoteText = findViewById(R.id.edt_note_text);
+        mTextNoteTitle = findViewById(R.id.edt_note_title);
+        mTextNoteText = findViewById(R.id.edt_note_text);
 
         if (!mIsNewNote)
-        displayNote(spinnerCourses,textNoteTitle, textNoteText);
+        displayNote(mSpinnerCourses, mTextNoteTitle, mTextNoteText);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        saveNote();
+    }
+
+    private void saveNote() {
+        mNote.setCourse((CourseInfo) mSpinnerCourses.getSelectedItem());
+        mNote.setTitle(mTextNoteTitle.getText().toString());
+        mNote.setText(mTextNoteText.getText().toString());
     }
 
     private void displayNote(Spinner spinnerCourses, EditText textNoteTitle, EditText textNoteText) {
@@ -71,8 +87,18 @@ public class NoteActivity extends AppCompatActivity {
         int position = intent.getIntExtra(NOTE_POSITION, getDefaultValue());
 
         mIsNewNote = position == getDefaultValue();
-        if (!mIsNewNote)
-            mNote = DataManager.getInstance().getNotes().get(position);
+        if (mIsNewNote) {
+               createNewNote();
+        }   else {
+               mNote = DataManager.getInstance().getNotes().get(position);
+        }
+
+    }
+
+    private void createNewNote() {
+        DataManager dm = DataManager.getInstance();
+        mNoteposition = dm.createNewNote();
+        mNote = dm.getNotes().get(mNoteposition);
     }
 
     public static int getDefaultValue() {
@@ -94,10 +120,22 @@ public class NoteActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_mail) {
+            sendEmail();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void sendEmail() {
+        CourseInfo course = (CourseInfo) mSpinnerCourses.getSelectedItem();
+        String subject = mTextNoteTitle.getText().toString();
+        String text = "Checkout what I learned in the pluralsight course \" " + course.getTitle() + "\"\n" + mTextNoteText.getText();
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("message/rfc2822");
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+        startActivity(intent);
     }
 }
